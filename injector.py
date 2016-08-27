@@ -15,4 +15,4 @@ with open(COMPILED_NAME, "w") as to_compile:
 		for line in in_file:
 			to_compile.write(line)
 
-call(["clang", COMPILED_NAME])
+call(["g++", COMPILED_NAME, '-ferror-limit=100'])
