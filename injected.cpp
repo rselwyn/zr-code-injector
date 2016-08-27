@@ -1,3 +1,5 @@
+#include <math.h>
+
 class API
 {
    public:
@@ -51,8 +53,21 @@ class Game
         }
 };
 
+void DEBUG(std::string s) {
+    std::cout << s << std::endl;
+}
+
 int main() {
   return 0;
+}
+
+// ZR Math Function
+float sqrtf(float x) {
+  return sqrt(x);
+}
+
+float expf(float x) {
+  return exp(x);
 }
 
 API api;
