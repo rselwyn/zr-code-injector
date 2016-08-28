@@ -1,6 +1,9 @@
 #include <math.h>
 #include <iostream>
 
+/*
+API class that represents the ZR Api functions.
+*/
 class API
 {
    public:
@@ -56,10 +59,6 @@ class Game
 
 void DEBUG(std::string s) {
     std::cout << s << std::endl;
-}
-
-int main() {
-  return 0;
 }
 
 // ZR Math Function
