@@ -29,6 +29,6 @@ with open(COMPILED_NAME, "w") as to_compile:
 			to_compile.write(line)
 
 	for i in MAIN_FUNCTION.split('\n'):
-		to_compile.write(i)
+		to_compile.write(i + '\n')
 
 call(["g++", COMPILED_NAME, '-ferror-limit=100'])
