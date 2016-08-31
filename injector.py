@@ -31,4 +31,4 @@ with open(COMPILED_NAME, "w") as to_compile:
 	for i in MAIN_FUNCTION.split('\n'):
 		to_compile.write(i + '\n')
 
-call(["g++", COMPILED_NAME, '-ferror-limit=100'])
+call(["g++", COMPILED_NAME, , '-std=c++98', '-ferror-limit=100'])

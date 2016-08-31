@@ -45,6 +45,9 @@ class API
       }
 };
 
+/**
+Game specific functions
+*/
 class Game 
 {
     public:
@@ -70,8 +73,43 @@ float expf(float x) {
   return exp(x);
 }
 
-void mathVecAdd(float *c, float *a, float *b, int n) {
+float log10f(float x) {
+  return log10(x);
+}
 
+// Log rule
+float logf(float x) {
+  return log10(x)/log(exp(1));
+}
+
+void mathVecAdd(float *c, float *a, float *b, int n) {
+  for (int i = 0; i < n; i++) {
+    c[i] = a[i] + b[i];
+  }
+}
+
+float sinf(float x) {
+  return sin(x);
+}
+
+float cosf(float x) {
+  return cos(x);
+}
+
+float tanf(float x) {
+  return tan(x);
+}
+
+float asinf(float x) {
+  return asin(x);
+}
+
+float acosf(float x) {
+  return acos(x);
+}
+
+float atanf(float x) {
+  return atan(x);
 }
 
 float mathVecNormalize(float *a, int n) {
@@ -83,7 +121,9 @@ float mathVecMagnitude(float *a, int n) {
 }
 
 void mathVecSubtract(float *c, float *a, float *b, int n) {
-
+  for (int i = 0; i < n; i++) {
+    c[i] = a[i] - b[i];
+  }
 }
 
 API api;
