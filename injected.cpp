@@ -134,5 +134,191 @@ void mathVecSubtract(float *c, float *a, float *b, int n) {
   }
 }
 
+
+/*
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+NOTE:  EVERYTHING BELOW THIS LINE BESIDES THE INSTANTIATION
+OF THE API AND GAME OBJECT WAS TAKEN FROM THE ZR MATH SOURCE CODE.
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+*/
+
+// Inverts a 3x3 matrix.  Returns false if successful
+int mathInvert3x3(float inv[3][3], float mat[3][3]){
+  float m11, m12, m13, m21, m22, m23, m31, m32, m33;
+  float temp;
+  
+  m11 = mat[0][0];
+  m12 = mat[0][1];
+  m13 = mat[0][2];
+  m21 = mat[1][0];
+  m22 = mat[1][1];
+  m23 = mat[1][2];
+  m31 = mat[2][0];
+  m32 = mat[2][1];
+  m33 = mat[2][2];
+
+  temp = m11*m22*m33 - m11*m23*m32 + m12*m23*m31 - m12*m21*m33 + m13*m21*m32 - m13*m22*m31;
+
+  // must have non-zero determinant
+  if (temp == 0.0)
+    return 1;
+
+  // make it multiplier to speed things up
+  temp = 1/temp;
+
+  inv[0][0] = temp*(m22*m33-m23*m32);
+  inv[0][1] = temp*(m13*m32-m12*m33);
+  inv[0][2] = temp*(m12*m23-m13*m22);
+  inv[1][0] = temp*(m23*m31-m21*m33);
+  inv[1][1] = temp*(m11*m33-m13*m31);
+  inv[1][2] = temp*(m13*m21-m11*m23);
+  inv[2][0] = temp*(m21*m32-m22*m31);
+  inv[2][1] = temp*(m12*m31-m11*m32);
+  inv[2][2] = temp*(m11*m22-m12*m21);
+
+  return 0;
+}
+
+//*******************************************
+// *  create body to global rotation matrix  *
+// *******************************************/
+void mathBody2Global(float body2Glo[3][3],float *state){
+  float q[4];
+
+  q[0] = state[QUAT_1];
+  q[1] = state[QUAT_2];
+  q[2] = state[QUAT_3];
+  q[3] = state[QUAT_4];
+
+  quat2matrixOut(body2Glo, q);
+}
+
+////////////////////////////////////////////////////////
+// Produces the rotation matrix needed to transform a
+// vector from the body frame specified by quat[] to the
+// reference frame.  Assumes [vector scalar] quat representation
+////////////////////////////////////////////////////////
+void quat2matrixOut(float mat[3][3], float quat[4]){
+  float q1 = quat[0], q2 = quat[1];
+  float q3 = quat[2], q4 = quat[3];
+  // make the rotation matrix from the quaternion
+  mat[0][0] = q4*q4+q1*q1-q2*q2-q3*q3;
+  mat[0][1] = 2*(q1*q2-q3*q4);
+  mat[0][2] = 2*(q1*q3+q2*q4);
+  mat[1][0] = 2*(q1*q2+q3*q4);
+  mat[1][1] = q4*q4-q1*q1+q2*q2-q3*q3;
+  mat[1][2] = 2*(q2*q3-q1*q4);
+  mat[2][0] = 2*(q1*q3-q2*q4);
+  mat[2][1] = 2*(q2*q3+q1*q4);
+  mat[2][2] = q4*q4-q1*q1-q2*q2+q3*q3;
+}
+
+////////////////////////////////////////////////////////
+// Produces the rotation matrix needed to transform a
+// vector from the reference to the body frame specified
+// by quat[].  Assumes [vector scalar] quat representation
+////////////////////////////////////////////////////////
+void quat2matrixIn(float mat[3][3], float quat[4]){
+  float qInv[4];
+  // invert the quaternion
+  qInv[0] = -quat[0];
+  qInv[1] = -quat[1];
+  qInv[2] = -quat[2];
+  qInv[3] =  quat[3];
+  // inverse of Out is In
+  quat2matrixOut(mat, qInv);
+}  
+
+////////////////////////////////////////////////////////
+// Calculates the multiplication of quaternions q1 and q2
+// q3 = q1*q2
+////////////////////////////////////////////////////////
+void quatMult(float *q3, float *q1, float *q2){
+  // quaternion multiplication (successive rotation), q2 onto q1
+  q3[0] = q1[0]*q2[3] + q1[1]*q2[2] - q1[2]*q2[1] + q1[3]*q2[0];
+  q3[1] = -q1[0]*q2[2] + q1[1]*q2[3] + q1[2]*q2[0] + q1[3]*q2[1];
+  q3[2] = q1[0]*q2[1] - q1[1]*q2[0] + q1[2]*q2[3] + q1[3]*q2[2];
+  q3[3] = -q1[0]*q2[0] - q1[1]*q2[1] - q1[2]*q2[2] + q1[3]*q2[3];
+  // normalize quaternion
+  mathVecNormalize(q3,4);
+}
+
+////////////////////////////////////////////////////////
+// Calculates the cross product of a and b
+////////////////////////////////////////////////////////
+void mathVecCross(float c[3], float a[3], float b[3]){
+    c[0] = a[1]*b[2]-a[2]*b[1];
+    c[1] = a[2]*b[0]-a[0]*b[2];
+    c[2] = a[0]*b[1]-a[1]*b[0];
+}
+
+
+/*---------------------------------------------------------------------------------*/
+void mathMatVecMult(float *c, float *a, float *b, int nr, int nc){
+    int i,j,nci;
+    for(i=0;i<nr;i++){
+        c[i] = 0.0f;
+        nci = nc*i;
+        for(j=0;j<nc;j++){
+            c[i] += a[nci+j]   *   b[j]; 
+        }
+    }
+}
+
+/*---------------------------------------------------------------------------------*/
+void mathMatMatMult(float *c, float *a, float *b, int nra, int nca, int ncb){
+    int i,j,k,ncbi,ncai;
+    for(i=0;i<nra;i++){
+      ncbi = ncb*i;
+      ncai = nca*i;
+        for(j=0;j<ncb;j++){
+            c[ncbi+j]=0.0f;
+            for(k=0;k<nca;k++){
+                //  The i'th row and j'th column of c is:
+                //  k'th entry in the i'th row of a  (TIMES)  k'th entry in the j'th column of b
+                c[ncbi+j] += a[ncai+k] * b[k*ncb+j];
+            }
+        }
+    }
+}
+
+/*---------------------------------------------------------------------------------*/
+void mathMatMatTransposeMult(float *c, float *a, float *b, int nra, int nca, int nrb){
+    int i,j,k,nrbi,ncai,ncaj;
+    // For clarity, the number of columns in b must be the same as the number of columns in a for c = a*b'
+    for(i=0;i<nra;i++){
+      nrbi = nrb*i;
+      ncai = nca*i;
+        for(j=0;j<nrb;j++){
+            ncaj = nca*j;
+            c[nrbi+j] = 0.0f;
+            for(k=0;k<nca;k++){
+                //  c = a * b' where the rows of b' = columns of b etc...
+                //  The i'th row and j'th column of c is:
+                //  k'th entry in the i'th row of a  (TIMES)  k'th entry in the j'th row of b
+                c[nrbi+j] += a[ncai+k] * b[ncaj+k];
+            }
+        }
+    }
+}
+
+/*---------------------------------------------------------------------------------*/
+void mathMatTransposeMatMult(float *c, float *a, float *b, int nra, int nca, int ncb){
+    int i,j,k,ncbi;
+    // For clarity, the number of rows in b must be the same as the number of rows in a for c = a'*b
+    for(i=0;i<nca;i++){
+      ncbi = ncb*i;
+        for(j=0;j<ncb;j++){
+            c[ncbi+j]=0.0f;
+            for(k=0;k<nra;k++){
+                //  c = a' * b where the rows of a' = columns of a etc...
+                //  The i'th row and j'th column of c is:
+                //  k'th entry in the i'th column of a  (TIMES)  k'th entry in the j'th column of b
+                c[ncbi+j] += a[nca*k+i] * b[ncb*k+j];
+            }
+        }
+    }
+}
+
 API api;
 Game game;
