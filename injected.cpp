@@ -113,11 +113,19 @@ float atanf(float x) {
 }
 
 float mathVecNormalize(float *a, int n) {
-  return 0.0f;
+  float mag = mathVecMagnitude(a, n);
+  for(int i = 0; i < n; i++) {
+  	a[n] /= mag;
+  }
+  return mag;
 }
 
 float mathVecMagnitude(float *a, int n) {
-  return 0.0f;
+  float sum = 0;
+  for(int i = 0; i < n; i++) {
+  	sum += a[n] * a[n];
+  }
+  return pow(sum, 0.5);
 }
 
 void mathVecSubtract(float *c, float *a, float *b, int n) {
