@@ -112,20 +112,21 @@ float atanf(float x) {
   return atan(x);
 }
 
+
+float mathVecMagnitude(float *a, int n) {
+  float sum = 0;
+  for(int i = 0; i < n; i++) {
+    sum += a[n] * a[n];
+  }
+  return pow(sum, 0.5);
+}
+
 float mathVecNormalize(float *a, int n) {
   float mag = mathVecMagnitude(a, n);
   for(int i = 0; i < n; i++) {
   	a[n] /= mag;
   }
   return mag;
-}
-
-float mathVecMagnitude(float *a, int n) {
-  float sum = 0;
-  for(int i = 0; i < n; i++) {
-  	sum += a[n] * a[n];
-  }
-  return pow(sum, 0.5);
 }
 
 void mathVecSubtract(float *c, float *a, float *b, int n) {
@@ -177,20 +178,6 @@ int mathInvert3x3(float inv[3][3], float mat[3][3]){
   inv[2][2] = temp*(m11*m22-m12*m21);
 
   return 0;
-}
-
-//*******************************************
-// *  create body to global rotation matrix  *
-// *******************************************/
-void mathBody2Global(float body2Glo[3][3],float *state){
-  float q[4];
-
-  q[0] = state[QUAT_1];
-  q[1] = state[QUAT_2];
-  q[2] = state[QUAT_3];
-  q[3] = state[QUAT_4];
-
-  quat2matrixOut(body2Glo, q);
 }
 
 ////////////////////////////////////////////////////////
