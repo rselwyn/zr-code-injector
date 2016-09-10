@@ -74,12 +74,64 @@ Game specific functions
 class Game 
 {
     public:
-        void takePic() {
+        bool dockItem() {
+          return false;
+        }
+
+        void dropItem() {
 
         }
 
-        int getEnergy() {
-            return 0;
+        int getNumItem() {
+          return 0;
+        }
+
+        void getItemLoc(float pos[], int itemID) {
+
+        }
+
+        int hasItem(int itemId) {
+          return 0;
+        }
+
+        int getItemType(int itemID) {
+          return 0;
+        }
+
+        void dropSPS() {
+
+        }
+
+        float getScore() {
+          return 0.0f;
+        }
+
+        float getOtherScore() {
+          return 0.0f;
+        }
+
+        float getFuelRemaining() {
+          return 0.0f;
+        }
+
+        int getCurrentTime() {
+          return 0;
+        }
+
+        void sendMessage(unsigned char input) {
+
+        }
+
+        int getNumSPSHeld() {
+          return 0.0f;
+        }
+
+        bool getZone(float zomeInfo[4]) {
+          return false;
+        }
+
+        bool hasItemBeenPickedUp(int itemID) {
+          return false;
         }
 };
 
