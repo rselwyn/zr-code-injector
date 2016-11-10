@@ -31,3 +31,13 @@ If you would like to remove the artifacts (`a.out` and the `COMPILED-*` file), u
 ```
 zr-compile <file-name> clean
 ```
+
+# Code Optimizer
+
+This will find purely syntactical optimizations for your code (where your code can be optmized using a set pattern).  To run this, use
+
+```
+python optmizer.py <your-zr-file>
+```
+
+The only optimizations that it will currently suggest are converting redundant array assignments to a `for` loop.

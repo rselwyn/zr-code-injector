@@ -8,8 +8,6 @@ COMPILED_NAME = "COMPILED-" + file_to_compile
 MAIN_FUNCTION = """
 
 int main() {
-  init();
-  for (int i = 0; i <180; i++) loop();
   return 0;
 }
 
