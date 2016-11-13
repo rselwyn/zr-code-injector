@@ -34,10 +34,13 @@ zr-compile <file-name> clean
 
 # Code Optimizer
 
-This will find purely syntactical optimizations for your code (where your code can be optmized using a set pattern).  To run this, use
+This will find purely syntactical optimizations for your code (where your code can be optmized using a set pattern).  To run this, use:
 
 ```
 python optmizer.py <your-zr-file>
 ```
 
-The only optimizations that it will currently suggest are converting redundant array assignments to a `for` loop.
+### Current optimizations:
+
+- Redundant array assignment (to replace with a for loop)
+- Calls to `acos` or `cos` (to replace with `acosf` or `cosf`)
